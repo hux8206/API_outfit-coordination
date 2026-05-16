@@ -14,19 +14,23 @@ enc_label = joblib.load('encoder_label.pkl')
 PALETTE = {
     # ĐI LÀM — tone trung tính, trang trọng
     ("trang", "di_lam"): [
-        ['#FFFFFF', '#1A1A1A', '#9E9E9E'],  # trắng + đen + xám
-        ['#F5F0E8', '#8B6F5E', '#FFFFFF'],  # be + nâu + trắng
-        ['#FFFFFF', '#1A3A5C', '#F5F0E8'],  # trắng + navy + be
+        ['#FFFFFF', '#1A1A1A', '#4A4A4A'],  # áo trắng + khoác đen + quần xám
+        ['#F5F0E8', '#8B6F5E', '#4A4A4A'],  # áo be + khoác nâu + quần xám đậm
+        ['#FFFFFF', '#1A3A5C', '#E8E0D5'],  # áo trắng + khoác navy + quần be
     ],
+
     ("vang", "di_lam"): [
-        ['#FFFFFF', '#1A3A5C', '#F5F0E8'],  # trắng + navy + be
-        ['#F5F0E8', '#8B6F5E', '#FFFFFF'],  # be + nâu + trắng
-        ['#FFFFFF', '#4A4A4A', '#E8E0D5'],  # trắng + xám đậm + be
+        ['#FFFFFF', '#1A3A5C', '#4A4A4A'],  # áo trắng + khoác navy + quần xám
+        ['#F5F0E8', '#8B6F5E', '#2F3A44'],  # áo be + khoác nâu + quần jeans đen
+        ['#FFFFFF', '#4A4A4A', '#E8E0D5'],  # áo trắng + khoác xám đậm + quần be
+        ['#F5DEB3', '#106B80', '#4A4A4A'],  # áo vàng nhạt + khoác teal đậm + quần xám
     ],
+
     ("ngam", "di_lam"): [
-        ['#FFFFFF', '#4A4A4A', '#1A1A1A'],  # trắng + xám + đen
-        ['#F5DEB3', '#FFFFFF', '#8B6F5E'],  # vàng nhạt + trắng + nâu
-        ['#E8E0D5', '#FFFFFF', '#4A4A4A'],  # be + trắng + xám
+        ['#FFFFFF', '#4A4A4A', '#1A1A1A'],  # áo trắng + khoác xám + quần đen
+        ['#F5DEB3', '#8B6F5E', '#2F3A44'],  # áo vàng nhạt + khoác nâu + jeans đen
+        ['#E8E0D5', '#1A3A5C', '#4A4A4A'],  # áo be + khoác navy + quần xám
+        ['#FFFFFF', '#106B80', '#1A1A1A'],  # áo trắng + khoác teal đậm + quần đen
     ],
 
         # ĐI HỌC — casual
@@ -91,7 +95,7 @@ def predict(data: DataInput):
         data.situation,
         data.style
     ]])
-    
+
     key = (data.skin.strip(), data.situation.strip())
     palette_list = PALETTE.get(key, [['#FFFFFF', '#1A1A1A', '#9E9E9E']])
     color = random.choice(palette_list)
