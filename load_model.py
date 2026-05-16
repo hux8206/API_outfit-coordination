@@ -69,9 +69,9 @@ PALETTE = {
         ['#F5F0E8', '#019898', '#6F8FAF'],  # áo be + khoác teal + jeans classic
         ['#FFFFFF', '#4A90D9', '#2F3A44'],  # áo trắng + khoác xanh + jeans đen
         ['#FFD700', '#8B6F5E', '#7A7A7A'],  # áo vàng + khoác nâu + jeans xám
-    ]
+    ],
 
-    ("ngam", "di_choi")[
+    ("ngam", "di_choi"):[
         ['#FFFFFF', '#FF8C00', '#2F3A44'],  # áo trắng + khoác cam + jeans đen
         ['#F5DEB3', '#019898', '#355C7D'],  # áo be + khoác teal + jeans xanh đậm
         ['#FFD700', '#B22222', '#6F8FAF'],  # áo vàng + khoác đỏ đô + jeans xanh vừa
