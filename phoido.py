@@ -84,14 +84,14 @@ RULES = [
     ("di_choi","sporty","nu","nong",    "tank_top","cardigan", "quan_ni"),
     ("di_choi","sporty","nu","mat",     "tank_top", "ao_khoac", "quan_ni"),
     ("di_choi","sporty","nu","lanh",    "ao_thun", "ao_khoac", "quan_ong_suong"),
-    ("di_choi","sporty","nam","nong",   "ao_thun", "ao_chong_nang", "short"),
+    ("di_choi","sporty","nam","nong",   "tank_top", "ao_chong_nang", "short"),
     ("di_choi","sporty","nam","mat",    "ao_thun", "ao_khoac", "quan_ong_suong"),
     ("di_choi","sporty","nam","lanh",   "ao_thun", "ao_khoac", "quan_ong_suong"),
 
     ("di_choi","streetwear","nu","nong","ao_thun","khong_co", "short"),
     ("di_choi","streetwear","nu","mat", "crop_top", "ao_khoac", "jeans"),
     ("di_choi","streetwear","nu","lanh","crop_top", "ao_khoac", "jeans"),
-    ("di_choi","streetwear","nam","nong","ao_thun","khong_co", "jeans"),
+    ("di_choi","streetwear","nam","nong","tank_top","khong_co", "jeans"),
     ("di_choi","streetwear","nam","mat","ao_thun", "ao_khoac", "jeans"),
     ("di_choi","streetwear","nam","lanh","ao_len", "ao_khoac", "jeans"),
 
