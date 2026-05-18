@@ -52,10 +52,9 @@ PALETTE = {
         ['#F5DEB3', '#FF8C00', '#1A1A1A'],  # áo vàng nhạt + khoác cam + quần đen
         ['#FFFFFF', '#106B80', '#1A1A1A'],  # áo trắng + khoác teal + quần đen
         ['#FFD700', '#4A4A4A', '#1A1A1A'],  # áo vàng + khoác xám + quần đen
-        ['#E8E0D5', '#4A90D9', '#4A4A4A'],  # áo be + khoác xanh + quần xám
+        ['#E8E0D5', '#4A90D9', '#4A4A4A'],  # áo be + khoác xanh + quần xám 
     ],
-
-
+\
     # ĐI CHƠI — nổi hơn
     ("trang", "di_choi"): [
         ['#FFFFFF', '#B22222', '#1A1A1A'],  # áo trắng + khoác đỏ đô + quần đen

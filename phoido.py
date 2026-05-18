@@ -44,7 +44,7 @@ RULES = [
     ("di_hoc","sporty","nu","nong",     "ao_thun","khong_co", "quan_ni"),
     ("di_hoc","sporty","nu","mat",      "ao_thun", "hoodie",   "quan_ni"),
     ("di_hoc","sporty","nu","lanh",     "ao_thun", "ao_khoac", "jeans"),
-    ("di_hoc","sporty","nam","nong",    "ao_thun", "khong_co", "kaki"),
+    ("di_hoc","sporty","nam","nong",    "ao_thun", "ao_chong_nang", "kaki"),
     ("di_hoc","sporty","nam","mat",     "ao_thun", "hoodie",   "kaki"),
     ("di_hoc","sporty","nam","lanh",    "ao_thun", "ao_khoac", "quan_ong_suong"),
 
@@ -84,7 +84,7 @@ RULES = [
     ("di_choi","sporty","nu","nong",    "tank_top","cardigan", "quan_ni"),
     ("di_choi","sporty","nu","mat",     "tank_top", "ao_khoac", "quan_ni"),
     ("di_choi","sporty","nu","lanh",    "ao_thun", "ao_khoac", "quan_ong_suong"),
-    ("di_choi","sporty","nam","nong",   "ao_thun", "khong_co", "short"),
+    ("di_choi","sporty","nam","nong",   "ao_thun", "ao_chong_nang", "short"),
     ("di_choi","sporty","nam","mat",    "ao_thun", "ao_khoac", "quan_ong_suong"),
     ("di_choi","sporty","nam","lanh",   "ao_thun", "ao_khoac", "quan_ong_suong"),
 
