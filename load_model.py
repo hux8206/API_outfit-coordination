@@ -38,7 +38,7 @@ PALETTE = {
         ['#FFFFFF', '#4A90D9', '#355C7D'],  # áo trắng + khoác denim + jeans xanh đậm
         ['#F5F0E8', '#8B6F5E', '#6F8FAF'],  # áo be + khoác nâu + jeans xanh classic
         ['#FFD6E0', '#6C63A8', '#AFCBDA'],  # áo hồng + khoác tím + jeans xanh nhạt
-        ['#E3F2FD', '#019898', '#2F3A44'],  # áo xanh nhạt + khoác teal + jeans đen
+        ["#A1D7FD", '#019898', '#2F3A44'],  # áo xanh nhạt + khoác teal + jeans đen
     ],
 
     ("vang", "di_hoc"): [
