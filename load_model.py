@@ -122,7 +122,7 @@ def predict(data: DataInput):
                 if ao_khoac == "khong_co":
                     color[1] = "khong_co"
 
-                score = (p1*p2*p3)*100
+                score = ((p1 + p2 + p3) / 3) * 100
 
                 outfits.append(
                     {
