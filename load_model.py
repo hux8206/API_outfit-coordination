@@ -111,8 +111,8 @@ def predict(data: DataInput):
     top_ao_khoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1], reverse=True)[:2]
     top_quan = sorted(zip(categories[2],probas[2][0]), key=lambda x : x[1], reverse=True)[:2]
 
-    key = (data.skin.strip(),data.situation.strip())
-    pallete_list = PALETTE.get(key,[["trang","den","xam"]]) #neu k tim thay skin va situa phu hop se lay trang,den,xam  
+    pallete_key = (data.skin.strip(),data.situation.strip())
+    pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]]) #neu k tim thay skin va situa phu hop se lay trang,den,xam  
 
     for ao_trong,p1 in top_ao_trong :
         for ao_khoac,p2 in top_ao_khoac :
@@ -142,13 +142,13 @@ def predict(data: DataInput):
     seen = set() #luu cac key de tranh trung lap
 
     for outfit in outfits :
-        key(
+        outfit_key = (
             outfit["ao_trong"],
             outfit["ao_khoac"],
             outfit["quan"]
         )
-        if key not in seen :
-            seen.add(key) 
+        if outfit_key not in seen :
+            seen.add(outfit_key) 
             unique_outfit.append(outfit)
     
     return{
