@@ -10,71 +10,78 @@ model = joblib.load('model.pkl')
 enc_content = joblib.load('encoder_cont.pkl')
 enc_label = joblib.load('encoder_label.pkl')
 
-# Phân màu theo CẢ 2 — màu da + hoàn cảnh
 PALETTE = {
-    # ĐI LÀM — tone trung tính, trang trọng
+    # DI LAM
+
     ("trang", "di_lam"): [
-        ['#FFFFFF', '#1A1A1A', '#4A4A4A'],  # áo trắng + khoác đen + quần xám
-        ['#F5F0E8', '#8B6F5E', '#4A4A4A'],  # áo be + khoác nâu + quần xám đậm
-        ['#FFFFFF', '#1A3A5C', '#E8E0D5'],  # áo trắng + khoác navy + quần be
+        ["trang", "den", "xam"],
+        ["kem", "nau", "xam"],
+        ["trang", "xam", "be"],
+        ["kem", "den", "xam"],
     ],
 
     ("vang", "di_lam"): [
-        ['#FFFFFF', '#1A3A5C', '#4A4A4A'],  # áo trắng + khoác navy + quần xám
-        ['#F5F0E8', '#8B6F5E', '#2F3A44'],  # áo be + khoác nâu + quần jeans đen
-        ['#FFFFFF', '#4A4A4A', '#E8E0D5'],  # áo trắng + khoác xám đậm + quần be
-        ['#F5DEB3', '#106B80', '#4A4A4A'],  # áo vàng nhạt + khoác teal đậm + quần xám
+        ["trang", "xam", "xam"],
+        ["kem", "nau", "xam"],
+        ["trang", "den", "be"],
+        ["vang", "nau", "xam"],
     ],
 
     ("ngam", "di_lam"): [
-        ['#FFFFFF', '#4A4A4A', '#1A1A1A'],  # áo trắng + khoác xám + quần đen
-        ['#F5DEB3', '#8B6F5E', '#2F3A44'],  # áo vàng nhạt + khoác nâu + jeans đen
-        ['#E8E0D5', '#1A3A5C', '#4A4A4A'],  # áo be + khoác navy + quần xám
-        ['#FFFFFF', '#106B80', '#1A1A1A'],  # áo trắng + khoác teal đậm + quần đen
+        ["trang", "xam", "den"],
+        ["vang", "nau", "xam"],
+        ["be", "xam", "den"],
+        ["trang", "nau", "den"],
     ],
 
-        # ĐI HỌC — casual
+    #DI HOC
     ("trang", "di_hoc"): [
-        ['#FFFFFF', '#4A90D9', '#355C7D'],  # áo trắng + khoác denim + jeans xanh đậm
-        ['#F5F0E8', '#8B6F5E', '#6F8FAF'],  # áo be + khoác nâu + jeans xanh classic
-        ['#FFD6E0', '#6C63A8', '#AFCBDA'],  # áo hồng + khoác tím + jeans xanh nhạt
-        ["#A1D7FD", '#019898', '#2F3A44'],  # áo xanh nhạt + khoác teal + jeans đen
+        ["trang", "xanh", "den"],
+        ["kem", "nau", "xam"],
+        ["hong", "xam", "trang"],
+        ["trang", "nau", "xanh"],
+        ["kem", "den", "xam"],
     ],
 
     ("vang", "di_hoc"): [
-        ['#F5F0E8', '#106B80', '#4A4A4A'],  # áo be + khoác teal + quần xám
-        ['#FFFFFF', '#D97A2C', '#8B6F5E'],  # áo trắng + khoác cam đất + quần nâu
-        ['#E8CFC1', '#8B6F5E', '#1A1A1A'],  # áo nude + khoác nâu + quần đen
-        ['#D6E8A3', '#019898', '#4A4A4A'],  # áo olive nhạt + khoác teal + quần xám
+        ["trang", "nau", "den"],
+        ["kem", "xanh", "xam"],
+        ["vang", "nau", "den"],
+        ["trang", "xam", "xanh"],
+        ["kem", "den", "xam"],
     ],
 
     ("ngam", "di_hoc"): [
-        ['#F5DEB3', '#FF8C00', '#1A1A1A'],  # áo vàng nhạt + khoác cam + quần đen
-        ['#FFFFFF', '#106B80', '#1A1A1A'],  # áo trắng + khoác teal + quần đen
-        ['#FFD700', '#4A4A4A', '#1A1A1A'],  # áo vàng + khoác xám + quần đen
-        ['#E8E0D5', '#4A90D9', '#4A4A4A'],  # áo be + khoác xanh + quần xám 
+        ["trang", "den", "xam"],
+        ["kem", "nau", "den"],
+        ["vang", "xam", "den"],
+        ["trang", "nau", "xanh"],
+        ["kem", "den", "xam"],
     ],
-\
-    # ĐI CHƠI — nổi hơn
+    # -------- ĐI CHƠI --------
+
     ("trang", "di_choi"): [
-        ['#FFFFFF', '#B22222', '#1A1A1A'],  # áo trắng + khoác đỏ đô + quần đen
-        ['#FFD6E0', '#C8A2C8', '#E8E0D5'],  # áo hồng + khoác tím pastel + quần be
-        ['#F5F0E8', '#019898', '#4A4A4A'],  # áo be + khoác teal + quần xám
-        ['#E3F2FD', '#1A3A5C', '#FFFFFF'],  # áo xanh nhạt + khoác navy + quần trắng
+        ["trang", "do",   "den"],  
+        ["hong",  "xam",  "trang"], 
+        ["kem",   "nau",  "be"],    
+        ["trang", "xanh", "trang"], 
+        ["vang",  "den",  "xam"],   
     ],
 
     ("vang", "di_choi"): [
-        ['#FFFFFF', '#FF8C00', '#355C7D'],  # áo trắng + khoác cam + jeans xanh đậm
-        ['#F5F0E8', '#019898', '#6F8FAF'],  # áo be + khoác teal + jeans classic
-        ['#FFFFFF', '#4A90D9', '#1A1A1A'],  # áo trắng + khoác xanh + jeans đen
-        ['#FFD700', '#8B6F5E', '#7A7A7A'],  # áo vàng + khoác nâu + jeans xám
+        ["trang", "cam",  "xanh"], 
+        ["kem",   "nau",  "xam"],   
+        ["trang", "xanh", "den"],   
+        ["vang",  "nau",  "xam"],   
+        ["trang", "den",  "be"],    
     ],
 
-    ("ngam", "di_choi"):[
-        ['#FFFFFF', '#FF8C00', '#1A1A1A'],  # áo trắng + khoác cam + jeans đen
-        ['#F5DEB3', '#019898', '#355C7D'],  # áo be + khoác teal + jeans xanh đậm
-        ['#FFD700', '#B22222', '#6F8FAF'],  # áo vàng + khoác đỏ đô + jeans xanh vừa
-        ['#FFFFFF', '#6C63A8', '#AFCBDA'],  # áo trắng + khoác tím + jeans nhạt
+    ("ngam", "di_choi"): [
+        ["trang", "cam",  "den"],
+        ["kem",   "nau",  "xanh"], 
+        ["vang",  "do",   "xam"],   
+        ["trang", "den",  "xanh"],  
+        ["kem",   "xam",  "den"],   
     ]
 }
 
@@ -95,22 +102,55 @@ def predict(data: DataInput):
         data.style
     ]])
 
-    key = (data.skin.strip(), data.situation.strip())
-    palette_list = PALETTE.get(key, [['#FFFFFF', '#1A1A1A', '#9E9E9E']])
-    color = random.choice(palette_list)
-
     encode = enc_content.transform(dulieu)
-    result = model.predict(encode)
-    result_enc = enc_label.inverse_transform(result)[0]
+    probas = model.predict_proba(encode) #tinh xs cua tung loai do trong tung loai quan ao, vidu : aotrong(somi,thun,..)no se tinh xac suat cac cai nay
+    outfits = []
+    categories = enc_label.categories_
 
-    if result_enc[1] == "khong_co":
-        color[1] = "khong_co"
+    top_ao_trong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1], reverse=True)[:2] #sap xep giam dan theo %, x[1] la so sanh probas, :2 lay 2 cai cao nhat
+    top_ao_khoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1], reverse=True)[:2]
+    top_quan = sorted(zip(categories[2],probas[2][0]), key=lambda x : x[1], reverse=True)[:2]
 
-    return {
-        "ao_trong":      result_enc[0],
-        "ao_khoac":      result_enc[1],
-        "quan":          result_enc[2],
-        "mau_ao_trong":  color[0],
-        "mau_quan":      color[2],
-        "mau_ao_khoac":  color[1]
+    key = (data.skin.strip(),data.situation.strip())
+    pallete_list = PALETTE.get(key,[["trang","den","xam"]]) #neu k tim thay skin va situa phu hop se lay trang,den,xam  
+
+    for ao_trong,p1 in top_ao_trong :
+        for ao_khoac,p2 in top_ao_khoac :
+            for quan, p3 in top_quan :
+                color = random.choice(pallete_list).copy()
+
+                if ao_khoac == "khong_co":
+                    color[1] = "khong_co"
+
+                score = (p1*p2*p3)*100
+
+                outfits.append(
+                    {
+                        "ao_trong" : ao_trong,
+                        "ao_khoac" : ao_khoac,
+                        "quan" : quan,
+                        "mau_ao_trong" : color[0],
+                        "mau_ao_khoac" : color[1],
+                        "mau_quan" : color[2],
+                        "compatibility" : round(score,2)
+                    }
+                )
+    
+    outfits = sorted(outfits, lambda x : x["compatibility"], reverse=True)
+
+    unique_outfit = []
+    seen = set() #luu cac key de tranh trung lap
+
+    for outfit in outfits :
+        key(
+            outfit["ao_trong"],
+            outfit["ao_khoac"],
+            outfit["quan"]
+        )
+        if key not in seen :
+            seen.add(key) 
+            unique_outfit.append(outfit)
+    
+    return{
+        "outfits" : unique_outfit[:3]
     }

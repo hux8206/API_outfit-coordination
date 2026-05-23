@@ -23,7 +23,7 @@ label_enc = encoder_label.fit_transform(label)
 
 content_train, content_test, label_train, label_test = train_test_split(content_enc, label_enc, test_size = 0.2, random_state = 42)
 
-model = MultiOutputClassifier(tree.DecisionTreeClassifier(class_weight='balanced',ccp_alpha=0.01))
+model = MultiOutputClassifier(tree.DecisionTreeClassifier(class_weight='balanced',ccp_alpha=0.0005,max_depth=20,min_samples_leaf=5,random_state=42))
 model.fit(content_train, label_train)
 
 label_pre = model.predict(content_test)
