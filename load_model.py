@@ -107,9 +107,9 @@ def predict(data: DataInput):
     outfits = []
     categories = enc_label.categories_
 
-    top_ao_trong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1], reverse=True)[:2] #sap xep giam dan theo %, x[1] la so sanh probas, :2 lay 2 cai cao nhat
-    top_ao_khoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1], reverse=True)[:2]
-    top_quan = sorted(zip(categories[2],probas[2][0]), key=lambda x : x[1], reverse=True)[:2]
+    top_ao_trong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1], reverse=True)[:3] #sap xep giam dan theo %, x[1] la so sanh probas, :2 lay 2 cai cao nhat
+    top_ao_khoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1], reverse=True)[:3]
+    top_quan = sorted(zip(categories[2],probas[2][0]), key=lambda x : x[1], reverse=True)[:3]
 
     pallete_key = (data.skin.strip(),data.situation.strip())
     pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]]) #neu k tim thay skin va situa phu hop se lay trang,den,xam  
@@ -122,7 +122,7 @@ def predict(data: DataInput):
                 if ao_khoac == "khong_co":
                     color[1] = "khong_co"
 
-                score = ((p1 + p2 + p3) / 3) * 100
+                score = ((((p1 + p2 + p3) / 3) ** 0.7) * 100)
 
                 outfits.append(
                     {
@@ -151,6 +151,34 @@ def predict(data: DataInput):
             seen.add(outfit_key) 
             unique_outfit.append(outfit)
     
+    final_outfits = []
+
+    for outfit in unique_outfit:
+        if len(final_outfits) == 0:
+            final_outfits.append(outfit)
+            continue
+
+        too_similar = False
+
+        for existing in final_outfits:
+            same_count = 0
+
+            if outfit["ao_trong"] == existing["ao_trong"]:
+                same_count += 1
+
+            if outfit["ao_khoac"] == existing["ao_khoac"]:
+                same_count += 1
+
+            if outfit["quan"] == existing["quan"]:
+                same_count += 1
+
+            # giống 2/3 món thì bỏ
+            if same_count >= 2:
+                too_similar = True
+                break
+
+        if not too_similar:
+            final_outfits.append(outfit)
     return{
-        "outfits" : unique_outfit[:3]
+        "outfits" : unique_outfit[:5]
     }
