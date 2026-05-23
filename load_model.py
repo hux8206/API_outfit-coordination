@@ -136,7 +136,7 @@ def predict(data: DataInput):
                     }
                 )
     
-    outfits = sorted(outfits, lambda x : x["compatibility"], reverse=True)
+    outfits = sorted(outfits, key=lambda x : x["compatibility"], reverse=True)
 
     unique_outfit = []
     seen = set() #luu cac key de tranh trung lap
