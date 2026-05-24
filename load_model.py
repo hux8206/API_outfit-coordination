@@ -116,37 +116,37 @@ def predict(data: DataInput):
             pc
         ]])
 
-    encode = enc_content.transform(dulieu)
-    probas = model.predict_proba(encode)
-    categories = enc_label.categories_
+        encode = enc_content.transform(dulieu)
+        probas = model.predict_proba(encode)
+        categories = enc_label.categories_
 
-    ao_trong = categories[0][probas[0][0].argmax()]
-    ao_khoac = categories[1][probas[1][0].argmax()]
-    quan = categories[2][probas[2][0].argmax()]
+        ao_trong = categories[0][probas[0][0].argmax()]
+        ao_khoac = categories[1][probas[1][0].argmax()]
+        quan = categories[2][probas[2][0].argmax()]
 
-    p1 = probas[0][0].max()
-    p2 = probas[1][0].max()
-    p3 = probas[2][0].max()
+        p1 = probas[0][0].max()
+        p2 = probas[1][0].max()
+        p3 = probas[2][0].max()
 
-    decrease = 1.0 if pc == data.style.strip() else 0.85
-    score = (((p1+p2+p3)/3)**0.5)*100*decrease
+        decrease = 1.0 if pc == data.style.strip() else 0.85
+        score = (((p1+p2+p3)/3)**0.5)*100*decrease
 
-    outfit_key = (ao_trong,ao_khoac,quan)
-    #if outfit_key not in seen :
-    #    seen.add(outfit_key)
-    color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
-    if ao_khoac == "khong_co":
-        color[1] = "khong_co"
-        outfits.append({
-                "ao_trong":     ao_trong,
-                "ao_khoac":     ao_khoac,
-                "quan":         quan,
-                "mau_ao_trong": color[0],
-                "mau_ao_khoac": color[1],
-                "mau_quan":     color[2],
-                "compatibility": round(score, 2)
-            })
-    outfits.sort(key=lambda x: x["compatibility"], reverse=True)
+        outfit_key = (ao_trong,ao_khoac,quan)
+        if outfit_key not in seen :
+            seen.add(outfit_key)
+            color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
+            if ao_khoac == "khong_co":
+                color[1] = "khong_co"
+                outfits.append({
+                    "ao_trong":     ao_trong,
+                    "ao_khoac":     ao_khoac,
+                    "quan":         quan,
+                    "mau_ao_trong": color[0],
+                    "mau_ao_khoac": color[1],
+                    "mau_quan":     color[2],
+                    "compatibility": round(score, 2)
+                })
+        outfits.sort(key=lambda x: x["compatibility"], reverse=True)
     return{
         "outfits" : outfits
     }
