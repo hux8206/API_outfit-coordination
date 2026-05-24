@@ -120,32 +120,32 @@ def predict(data: DataInput):
         probas = model.predict_proba(encode)
         categories = enc_label.categories_
 
-        ao_trong = categories[0][probas[0][0].argmax()]
-        ao_khoac = categories[1][probas[1][0].argmax()]
-        quan = categories[2][probas[2][0].argmax()]
+        top2_aotrong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1],reverse=True)[:2]
+        top2_aokhoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1],reverse=True)[:2]
+        top2_quan = sorted(zip(categories[2],probas[2][0]),key=lambda x : x[1],reverse=True)[:2]
 
-        p1 = probas[0][0].max()
-        p2 = probas[1][0].max()
-        p3 = probas[2][0].max()
+        for ao_trong, p1 in top2_aotrong:
+            for ao_khoac, p2 in top2_aokhoac :
+                for quan, p3 in top2_quan :
+                    outfit_key = (ao_trong, ao_khoac, quan)
+                    if outfit_key not in seen :
+                        seen.add(outfit_key)
+                        color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
+                        
+                        if ao_khoac == "khong_co":
+                            color[1] = "khong_co"
 
-        decrease = 1.0 if pc == data.style.strip() else 0.85
-        score = (((p1+p2+p3)/3)**0.5)*100*decrease
-
-        outfit_key = (ao_trong,ao_khoac,quan)
-        if outfit_key not in seen :
-            seen.add(outfit_key)
-            color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
-            if ao_khoac == "khong_co":
-                color[1] = "khong_co"
-                outfits.append({
-                    "ao_trong":     ao_trong,
-                    "ao_khoac":     ao_khoac,
-                    "quan":         quan,
-                    "mau_ao_trong": color[0],
-                    "mau_ao_khoac": color[1],
-                    "mau_quan":     color[2],
-                    "compatibility": round(score, 2)
-                })
+                        decrease = 1.0 if pc == data.style.strip() else 0.85
+                        score = (((p1+p2+p3)/3)**0.35)*100*decrease
+                        outfits.append({
+                            "ao_trong":     ao_trong,
+                            "ao_khoac":     ao_khoac,
+                            "quan":         quan,
+                            "mau_ao_trong": color[0],
+                            "mau_ao_khoac": color[1],
+                            "mau_quan":     color[2],                             
+                            "compatibility": round(score, 2)
+                        })
         outfits.sort(key=lambda x: x["compatibility"], reverse=True)
     return{
         "outfits" : outfits
