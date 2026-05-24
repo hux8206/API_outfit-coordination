@@ -94,91 +94,59 @@ class DataInput(BaseModel):
 
 @app.post("/predict")
 def predict(data: DataInput):
-    dulieu = np.array([[
-        data.skin,
-        data.season,
-        data.sex,
-        data.situation,
-        data.style
-    ]])
+    style_list = ["toi_gian","han_quoc","lich_su","vintage","sporty","streetwear"]
+
+    current_list = style_list.copy() #tao ban sao de khong thay doi ban goc
+    user_style = data.style.strip()
+    if user_style in current_list : 
+        current_list.append(user_style)
+        current_list.append(user_style)
+
+    seen = set()
+    outfits = []
+    pallete_key = (data.skin.strip(),data.situation.strip())
+    pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]])
+    
+    for pc in style_list :
+        dulieu = np.array([[
+            data.skin,
+            data.season,
+            data.sex,
+            data.situation,
+            pc
+        ]])
 
     encode = enc_content.transform(dulieu)
-    probas = model.predict_proba(encode) #tinh xs cua tung loai do trong tung loai quan ao, vidu : aotrong(somi,thun,..)no se tinh xac suat cac cai nay
-    outfits = []
+    probas = model.predict_proba(encode)
     categories = enc_label.categories_
 
-    top_ao_trong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1], reverse=True)[:3] #sap xep giam dan theo %, x[1] la so sanh probas, :2 lay 2 cai cao nhat
-    top_ao_khoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1], reverse=True)[:3]
-    top_quan = sorted(zip(categories[2],probas[2][0]), key=lambda x : x[1], reverse=True)[:3]
+    ao_trong = categories[0][probas[0][0].argmax()]
+    ao_khoac = categories[1][probas[1][0].argmax()]
+    quan = categories[2][probas[2][0].argmax()]
 
-    pallete_key = (data.skin.strip(),data.situation.strip())
-    pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]]) #neu k tim thay skin va situa phu hop se lay trang,den,xam  
+    p1 = probas[0][0].max()
+    p2 = probas[1][0].max()
+    p3 = probas[2][0].max()
 
-    for ao_trong,p1 in top_ao_trong :
-        for ao_khoac,p2 in top_ao_khoac :
-            for quan, p3 in top_quan :
-                color = random.choice(pallete_list).copy()
+    decrease = 1.0 if pc == data.style.strip() else 0.85
+    score = (((p1+p2+p3)/3)**0.5)*100*decrease
 
-                if ao_khoac == "khong_co":
-                    color[1] = "khong_co"
-
-                score = ((((p1 + p2 + p3) / 3) ** 0.7) * 100)
-
-                outfits.append(
-                    {
-                        "ao_trong" : ao_trong,
-                        "ao_khoac" : ao_khoac,
-                        "quan" : quan,
-                        "mau_ao_trong" : color[0],
-                        "mau_ao_khoac" : color[1],
-                        "mau_quan" : color[2],
-                        "compatibility" : round(score,2)
-                    }
-                )
-    
-    outfits = sorted(outfits, key=lambda x : x["compatibility"], reverse=True)
-
-    unique_outfit = []
-    seen = set() #luu cac key de tranh trung lap
-
-    for outfit in outfits :
-        outfit_key = (
-            outfit["ao_trong"],
-            outfit["ao_khoac"],
-            outfit["quan"]
-        )
-        if outfit_key not in seen :
-            seen.add(outfit_key) 
-            unique_outfit.append(outfit)
-    
-    final_outfits = []
-
-    for outfit in unique_outfit:
-        if len(final_outfits) == 0:
-            final_outfits.append(outfit)
-            continue
-
-        too_similar = False
-
-        for existing in final_outfits:
-            same_count = 0
-
-            if outfit["ao_trong"] == existing["ao_trong"]:
-                same_count += 1
-
-            if outfit["ao_khoac"] == existing["ao_khoac"]:
-                same_count += 1
-
-            if outfit["quan"] == existing["quan"]:
-                same_count += 1
-
-            # giống 2/3 món thì bỏ
-            if same_count >= 2:
-                too_similar = True
-                break
-
-        if not too_similar:
-            final_outfits.append(outfit)
+    outfit_key = (ao_trong,ao_khoac,quan)
+    if outfit_key not in seen :
+        seen.add(outfit_key)
+        color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
+        if ao_khoac == "khong_co":
+            color[1] = "khong_co"
+            outfits.append({
+                "ao_trong":     ao_trong,
+                "ao_khoac":     ao_khoac,
+                "quan":         quan,
+                "mau_ao_trong": color[0],
+                "mau_ao_khoac": color[1],
+                "mau_quan":     color[2],
+                "compatibility": round(score, 2)
+            })
+    outfits.sort(key=lambda x: x["compatibility"], reverse=True)
     return{
-        "outfits" : unique_outfit[:5]
+        "outfits" : outfits
     }
