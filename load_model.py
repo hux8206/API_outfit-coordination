@@ -127,6 +127,8 @@ def predict(data: DataInput):
         for ao_trong, p1 in top2_aotrong:
             for ao_khoac, p2 in top2_aokhoac :
                 for quan, p3 in top2_quan :
+                    if data.situation == "di_lam" and ao_trong in ["tank_top", "crop_top"]:
+                        continue
                     outfit_key = (ao_trong, ao_khoac, quan)
                     if outfit_key not in seen :
                         seen.add(outfit_key)
@@ -148,5 +150,5 @@ def predict(data: DataInput):
                         })
         outfits.sort(key=lambda x: x["compatibility"], reverse=True)
     return{
-        "outfits" : outfits
+        "outfits" : outfits[:6]
     }
