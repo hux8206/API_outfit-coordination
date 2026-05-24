@@ -106,7 +106,7 @@ def predict(data: DataInput):
     outfits = []
     pallete_key = (data.skin.strip(),data.situation.strip())
     pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]])
-    
+
     for pc in style_list :
         dulieu = np.array([[
             data.skin,
@@ -132,12 +132,12 @@ def predict(data: DataInput):
     score = (((p1+p2+p3)/3)**0.5)*100*decrease
 
     outfit_key = (ao_trong,ao_khoac,quan)
-    if outfit_key not in seen :
-        seen.add(outfit_key)
-        color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
-        if ao_khoac == "khong_co":
-            color[1] = "khong_co"
-            outfits.append({
+    #if outfit_key not in seen :
+    #    seen.add(outfit_key)
+    color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
+    if ao_khoac == "khong_co":
+        color[1] = "khong_co"
+        outfits.append({
                 "ao_trong":     ao_trong,
                 "ao_khoac":     ao_khoac,
                 "quan":         quan,
