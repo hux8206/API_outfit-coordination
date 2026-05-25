@@ -30,7 +30,7 @@ PALETTE = {
     ("ngam", "di_lam"): [
         ["trang", "xam", "den"],
         ["vang", "nau", "xam"],
-        ["be", "xam", "den"],
+        ["kem", "xam", "den"],
         ["trang", "nau", "den"],
     ],
 
