@@ -7,7 +7,7 @@ import google.generativeai as genai
 import json
 
 genai.configure(api_key="AQ.Ab8RN6JQZEaI8qkZQqPI1nIcruVqWZ5x6COq8WDtHwOyTgDm1w")
-gemini = genai.GenerativeModel("gemini-pro")
+gemini = genai.GenerativeModel("gemini-1.5-flash")
 
 app = FastAPI()
 
@@ -134,7 +134,7 @@ def predict_text(data: TextInput):
         text = text.strip()
 
         print("SAU CLEAN:", text, flush=True)
-        extracted = json.loads(response.text.strip())
+        extracted = json.loads(text)
     except :
         return {"error" : "không hiểu câu vui lòng thử lại"}
     
