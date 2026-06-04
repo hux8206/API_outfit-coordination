@@ -149,6 +149,7 @@ def predict_text(data: TextInput):
         situation = extracted["situation"],
         style     = extracted["style"]
     )
+    print("GEMINI RAW:", response.text)
     return predict(input_data)
 
 @app.post("/predict")
