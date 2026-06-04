@@ -135,9 +135,9 @@ def predict_text(data: TextInput):
 
         print("SAU CLEAN:", text, flush=True)
         extracted = json.loads(text)
-    except :
-        return {"error" : "không hiểu câu vui lòng thử lại"}
-    
+    except Exception as e:
+        return {"error": str(e)}
+        
     defaults = {
         "skin" : "trang",
         "season" : "mat",
