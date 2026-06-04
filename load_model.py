@@ -3,6 +3,11 @@ from pydantic import BaseModel
 import joblib
 import numpy as np
 import random
+import google.generativeai as genai
+import json
+
+genai.configure(api_key="AQ.Ab8RN6JQZEaI8qkZQqPI1nIcruVqWZ5x6COq8WDtHwOyTgDm1w")
+gemini = genai.GenerativeModel("gemini-pro")
 
 app = FastAPI()
 
@@ -15,75 +20,87 @@ PALETTE = {
 
     ("trang", "di_lam"): [
         ["trang", "den", "xam"],
-        ["kem", "nau", "xam"],
+        ["den", "nau", "trang"],
         ["trang", "xam", "be"],
         ["kem", "den", "xam"],
+        ["trang","xanh","den"],
+        ["trang","den","nau"]
     ],
 
     ("vang", "di_lam"): [
-        ["trang", "xam", "xam"],
-        ["kem", "nau", "xam"],
+        ["den", "xam", "trang"],
+        ["kem", "trang", "den"],
         ["trang", "den", "be"],
-        ["vang", "nau", "xam"],
+        ["den", "nau", "xam"],
+        ["kem","xanh","nau"]
     ],
 
     ("ngam", "di_lam"): [
         ["trang", "xam", "den"],
-        ["vang", "nau", "xam"],
-        ["kem", "xam", "den"],
+        ["vang", "trang", "xam"],
+        ["kem", "xam", "trang"],
         ["trang", "nau", "den"],
+        ["trang","xanh","xam"],
+        ["kem","trang","nau"]
     ],
 
     #DI HOC
     ("trang", "di_hoc"): [
-        ["trang", "xanh", "den"],
-        ["kem", "nau", "xam"],
-        ["hong", "xam", "trang"],
-        ["trang", "nau", "xanh"],
-        ["kem", "den", "xam"],
+        ["trang", "xanh", "nau"],
+        ["hong",  "trang", "xam"],
+        ["vang",  "nau", "den"],
+        ["den", "xam",   "trang"],
+        ["xanhla",  "trang", "den"],
+        ["vang","trang","nau"]
     ],
 
     ("vang", "di_hoc"): [
-        ["trang", "nau", "den"],
-        ["kem", "xanh", "xam"],
-        ["vang", "nau", "den"],
-        ["trang", "xam", "xanh"],
-        ["kem", "den", "xam"],
+        ["do", "trang",   "den"],
+        ["kem",   "xanh",  "nau"],
+        ["vang",  "trang", "den"],
+        ["trang", "nau",   "xanh"],
+        ["den",   "trang", "nau"],
     ],
 
     ("ngam", "di_hoc"): [
-        ["trang", "den", "xam"],
-        ["kem", "nau", "den"],
-        ["vang", "xam", "den"],
-        ["trang", "nau", "xanh"],
-        ["kem", "den", "xam"],
+        ["hong", "trang",  "den"],
+        ["vang",  "den",  "trang"],
+        ["xanh", "trang", "den"],
+        ["do",   "trang","nau"],
+        ["xanh",  "den",  "trang"],
     ],
     # -------- ĐI CHƠI --------
 
     ("trang", "di_choi"): [
-        ["trang", "do",   "den"],  
+        ["do", "kem",   "den"],  
         ["hong",  "xam",  "trang"], 
         ["kem",   "nau",  "be"],    
-        ["trang", "xanh", "trang"], 
-        ["vang",  "den",  "xam"],   
+        ["xanhla", "den", "trang"], 
+        ["xanh",  "den",  "xam"],
+        ["xanh","trang","nau"]   
     ],
 
     ("vang", "di_choi"): [
-        ["trang", "cam",  "xanh"], 
-        ["kem",   "nau",  "xam"],   
+        ["trang", "kem",  "xanh"], 
+        ["xanh",   "nau",  "xam"],   
         ["trang", "xanh", "den"],   
-        ["vang",  "nau",  "xam"],   
-        ["trang", "den",  "be"],    
+        ["den",  "nau",  "xam"],   
+        ["den", "trang",  "be"],
+        ["trang","den","nau"]    
     ],
 
     ("ngam", "di_choi"): [
-        ["trang", "cam",  "den"],
+        ["do", "kem",  "den"],
         ["kem",   "nau",  "xanh"], 
-        ["vang",  "do",   "xam"],   
-        ["trang", "den",  "xanh"],  
-        ["kem",   "xam",  "den"],   
+        ["vang",  "do",   "trang"],   
+        ["den", "trang",  "xanh"],  
+        ["kem",   "xam",  "den"],
+        ["kem","trang","nau"]   
     ]
 }
+
+class TextInput(BaseModel):
+    text : str
 
 class DataInput(BaseModel):
     skin : str
@@ -91,6 +108,48 @@ class DataInput(BaseModel):
     sex : str
     situation : str
     style : str
+
+@app.post("/predict_text")
+def predict_text(data: TextInput):
+    promt = f"""
+        Từ câu này : "{data.text}"
+        Trích xuất thộng tin và trả về JSON :
+        {{
+            "skin" : "trang/vang/ngam hoặc null",
+            "season" : "nong/mat/lanh hoặc null",
+            "sex" : "nam/nu hoặc null",
+            "situation" : "di_lam/di_hoc/di_choi hoặc null",
+            "style" : "toi_gian/lich_su/streetwear/sporty/han_quoc/vintage hoặc null"
+        }}
+        Chỉ trả về JSON, không giải thích gì thêm.
+    """
+
+    try :
+        response = gemini.generate_content(promt)
+        extracted = json.loads(response.text.strip())
+    except :
+        return {"error" : "không hiểu câu vui lòng thử lại"}
+    
+    defaults = {
+        "skin" : "trang",
+        "season" : "mat",
+        "sex" : "nam",
+        "situation" : "di_choi",
+        "style" : "toi_gian"
+    }
+
+    for key in defaults :
+        if not extracted.get(key) or extracted.get(key) == "null" :
+            extracted[key] = defaults[key]
+
+    input_data = DataInput(
+        skin = extracted["skin"],
+        season    = extracted["season"],
+        sex       = extracted["sex"],
+        situation = extracted["situation"],
+        style     = extracted["style"]
+    )
+    return predict(input_data)
 
 @app.post("/predict")
 def predict(data: DataInput):
@@ -107,7 +166,7 @@ def predict(data: DataInput):
     pallete_key = (data.skin.strip(),data.situation.strip())
     pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]])
 
-    for pc in style_list :
+    for pc in current_list :
         dulieu = np.array([[
             data.skin,
             data.season,
