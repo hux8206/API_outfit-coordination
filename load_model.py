@@ -126,6 +126,14 @@ def predict_text(data: TextInput):
 
     try :
         response = gemini.generate_content(promt)
+        print("GEMINI RAW:", response.text, flush=True)
+
+        text = response.text.strip()
+        text = text.replace("```json", "")
+        text = text.replace("```", "")
+        text = text.strip()
+
+        print("SAU CLEAN:", text, flush=True)
         extracted = json.loads(response.text.strip())
     except :
         return {"error" : "không hiểu câu vui lòng thử lại"}
@@ -149,7 +157,6 @@ def predict_text(data: TextInput):
         situation = extracted["situation"],
         style     = extracted["style"]
     )
-    print("GEMINI RAW:", response.text)
     return predict(input_data)
 
 @app.post("/predict")
