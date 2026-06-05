@@ -5,8 +5,11 @@ import numpy as np
 import random
 import google.generativeai as genai
 import json
+import os
+from dotenv import load_dotenv
 
-genai.configure(api_key="GEMINI_API_KEY")
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 gemini = genai.GenerativeModel("gemini-1.5-flash")
 
 app = FastAPI()
