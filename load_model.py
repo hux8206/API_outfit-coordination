@@ -114,7 +114,8 @@ class DataInput(BaseModel):
 
 @app.post("/predict_text")
 def predict_text(data: TextInput):
-    prompt = f"""
+
+    promt = f"""
     Bạn là AI phân tích yêu cầu phối đồ.
 
     Nhiệm vụ:
