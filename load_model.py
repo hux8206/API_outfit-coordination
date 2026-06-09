@@ -114,17 +114,77 @@ class DataInput(BaseModel):
 
 @app.post("/predict_text")
 def predict_text(data: TextInput):
-    promt = f"""
-        Từ câu này : "{data.text}"
-        Trích xuất thộng tin và trả về JSON :
-        {{
-            "skin" : "trang/vang/ngam hoặc null",
-            "season" : "nong/mat/lanh hoặc null",
-            "sex" : "nam/nu hoặc null",
-            "situation" : "di_lam/di_hoc/di_choi hoặc null",
-            "style" : "toi_gian/lich_su/streetwear/sporty/han_quoc/vintage hoặc null"
-        }}
-        Chỉ trả về JSON, không giải thích gì thêm.
+    prompt = f"""
+    Bạn là AI phân tích yêu cầu phối đồ.
+
+    Nhiệm vụ:
+    Đọc mô tả của người dùng và chuyển thành JSON đúng format bên dưới.
+
+    QUY TẮC:
+    - Chỉ trả về JSON hợp lệ.
+    - Không giải thích.
+    - Không thêm markdown.
+    - Nếu người dùng dùng tiếng Anh hoặc từ đồng nghĩa thì tự hiểu và chuyển về format chuẩn.
+    - Nếu thiếu thông tin thì điền null.
+
+    Các giá trị hợp lệ:
+
+    skin:
+    - trang
+    - vang
+    - ngam
+
+    season:
+    - nong
+    - mat
+    - lanh
+
+    sex:
+    - nam
+    - nu
+
+    situation:
+    - di_hoc
+    - di_choi
+    - di_lam
+
+    style:
+    - toi_gian
+    - lich_su
+    - streetwear
+    - sporty
+    - han_quoc
+    - vintage
+
+    Ví dụ:
+
+    Input:
+    "male, dark skin, sporty style, hot weather, go to school"
+
+    Output:
+    {{
+        "skin": "ngam",
+        "season": "nong",
+        "sex": "nam",
+        "situation": "di_hoc",
+        "style": "sporty"
+    }}
+
+    Input:
+    "Tôi là nam da vàng đi chơi trời mát thích phong cách Hàn Quốc"
+
+    Output:
+    {{
+        "skin": "vang",
+        "season": "mat",
+        "sex": "nam",
+        "situation": "di_choi",
+        "style": "han_quoc"
+    }}
+
+    Phân tích câu sau:
+
+    "{data.text}"
     """
 
     try :
