@@ -9,9 +9,7 @@ MUA       = ["nong", "mat", "lanh"]
 GIOI_TINH = ["nam", "nu"]
 
 RULES = [
-    #---DI LAM---
-
-    #toi gian
+     #toi gian
     ("di_lam","toi_gian","nu","nong", "so_mi",   "khong_co", "quan_tay"),
     ("di_lam","toi_gian","nu","nong", "ao_thun", "cardigan", "quan_tay"),
     ("di_lam","toi_gian","nu","nong", "polo",    "khong_co", "quan_tay"),
