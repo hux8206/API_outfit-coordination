@@ -226,13 +226,19 @@ def predict_text(data: TextInput):
 @app.post("/predict")
 def predict(data: DataInput):
     style_list = ["toi_gian","han_quoc","lich_su","vintage","sporty","streetwear"]
-    
+
+    current_list = style_list.copy() #tao ban sao de khong thay doi ban goc
+    user_style = data.style.strip()
+    if user_style in current_list : 
+        current_list.append(user_style)
+        current_list.append(user_style)
+
     seen = set()
     outfits = []
-    pallete_key = (data.skin.strip(), data.situation.strip())
-    pallete_list = PALETTE.get(pallete_key, [["trang","den","xam"]])
+    pallete_key = (data.skin.strip(),data.situation.strip())
+    pallete_list = PALETTE.get(pallete_key,[["trang","den","xam"]])
 
-    for pc in style_list:
+    for pc in current_list :
         dulieu = np.array([[
             data.skin,
             data.season,
@@ -245,77 +251,35 @@ def predict(data: DataInput):
         probas = model.predict_proba(encode)
         categories = enc_label.categories_
 
-        # Tăng lên top3 để đa dạng hơn
-        top3_aotrong = sorted(zip(categories[0], probas[0][0]), key=lambda x: x[1], reverse=True)[:3]
-        top3_aokhoac = sorted(zip(categories[1], probas[1][0]), key=lambda x: x[1], reverse=True)[:3]
-        top3_quan    = sorted(zip(categories[2], probas[2][0]), key=lambda x: x[1], reverse=True)[:3]
+        top2_aotrong = sorted(zip(categories[0],probas[0][0]),key=lambda x : x[1],reverse=True)[:2]
+        top2_aokhoac = sorted(zip(categories[1],probas[1][0]),key=lambda x : x[1],reverse=True)[:2]
+        top2_quan = sorted(zip(categories[2],probas[2][0]),key=lambda x : x[1],reverse=True)[:2]
 
-        # Đảm bảo phong cách này góp được ít nhất 1 outfit (lấy top1 trước)
-        best_outfit_for_pc = None
-
-        for ao_trong, p1 in top3_aotrong:
-            for ao_khoac, p2 in top3_aokhoac:
-                for quan, p3 in top3_quan:
+        for ao_trong, p1 in top2_aotrong:
+            for ao_khoac, p2 in top2_aokhoac :
+                for quan, p3 in top2_quan :
                     if data.situation == "di_lam" and ao_trong in ["tank_top", "crop_top"]:
                         continue
-
                     outfit_key = (ao_trong, ao_khoac, quan)
-                    
-                    color = random.choice(pallete_list).copy()
-                    if ao_khoac == "khong_co":
-                        color[1] = "khong_co"
-
-                    decrease = 1.0 if pc == data.style.strip() else 0.85
-                    score = (((p1 + p2 + p3) / 3) ** 0.35) * 100 * decrease
-
-                    candidate = {
-                        "phong_cach":   pc,
-                        "ao_trong":     ao_trong,
-                        "ao_khoac":     ao_khoac,
-                        "quan":         quan,
-                        "mau_ao_trong": color[0],
-                        "mau_ao_khoac": color[1],
-                        "mau_quan":     color[2],
-                        "compatibility": round(score, 2)
-                    }
-
-                    # Lưu lại outfit tốt nhất của phong cách này (dù trùng vẫn lưu tạm)
-                    if best_outfit_for_pc is None or score > best_outfit_for_pc["compatibility"]:
-                        best_outfit_for_pc = candidate
-
-                    # Nếu chưa trùng thì thêm vào danh sách chính
-                    if outfit_key not in seen:
+                    if outfit_key not in seen :
                         seen.add(outfit_key)
-                        outfits.append(candidate)
+                        color = random.choice(pallete_list).copy() #copy(): tao ban sao de neu chinh sua se khong thay doi du lieu goc
+                        
+                        if ao_khoac == "khong_co":
+                            color[1] = "khong_co"
 
-        # Đảm bảo MỖI phong cách có ít nhất 1 outfit đại diện trong kết quả cuối
-        if best_outfit_for_pc:
-            key = (best_outfit_for_pc["ao_trong"], best_outfit_for_pc["ao_khoac"], best_outfit_for_pc["quan"])
-            if key not in seen:
-                seen.add(key)
-                outfits.append(best_outfit_for_pc)
-
-    outfits.sort(key=lambda x: x["compatibility"], reverse=True)
-
-    # Lấy outfit đa dạng — ưu tiên không lặp ao_trong liên tiếp
-    final_outfits = []
-    used_ao_trong = []
-    
-    for outfit in outfits:
-        if len(final_outfits) >= 6:
-            break
-        # Ưu tiên outfit có ao_trong khác với 2 outfit gần nhất
-        recent_ao_trong = used_ao_trong[-2:]
-        if outfit["ao_trong"] not in recent_ao_trong or len(final_outfits) < 2:
-            final_outfits.append(outfit)
-            used_ao_trong.append(outfit["ao_trong"])
-
-    # Nếu chưa đủ 6 thì bổ sung từ outfits còn lại
-    if len(final_outfits) < 6:
-        for outfit in outfits:
-            if outfit not in final_outfits:
-                final_outfits.append(outfit)
-            if len(final_outfits) >= 6:
-                break
-
-    return {"outfits": final_outfits[:6]}
+                        decrease = 1.0 if pc == data.style.strip() else 0.85
+                        score = (((p1+p2+p3)/3)**0.35)*100*decrease
+                        outfits.append({
+                            "ao_trong":     ao_trong,
+                            "ao_khoac":     ao_khoac,
+                            "quan":         quan,
+                            "mau_ao_trong": color[0],
+                            "mau_ao_khoac": color[1],
+                            "mau_quan":     color[2],                             
+                            "compatibility": round(score, 2)
+                        })
+        outfits.sort(key=lambda x: x["compatibility"], reverse=True)
+    return{
+        "outfits" : outfits[:6]
+    }
